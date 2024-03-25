@@ -16,15 +16,13 @@ Base = sqlalchemy.orm.declarative_base()
 class Person(Base):
     __tablename__ = "person"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    # id = Column(Integer)
     first_name = Column("First Name", String)
     last_name = Column("Last Name", String)
-    # personal_id = Column("Personal ID", Integer, unique=True)
     email = Column("Email", String)
 
 
     def __repr__(self):
-        return f"{self.id}: {self.first_name} {self.last_name}, {self.personal_id}, {self.email}"
+        return f"{self.id}: {self.first_name}, {self.last_name}, {self.email}"
 
 
 class Bank(Base):
@@ -44,12 +42,21 @@ class Account(Base):
     id = Column(Integer, primary_key=True)
     number = Column("Account Number", Integer)
     balance = Column("Balance", Float)
-    person_id = Column(Integer, ForeignKey('person.id'))
+    person_id = Column(String, ForeignKey('person.id'))
     person = relationship("Person")
-    bank_id = Column(Integer, ForeignKey('bank.id'))
+    bank_id = Column(String, ForeignKey('bank.id'))
     bank = relationship("Bank")
 
     def __repr__(self):
         return f"{self.id}: {self.number}, {self.balance}, {self.person}, {self.bank}"
+
+
+# in future create new table History of Transactions. With amount and bank account ID.
+class Transaction(Base):
+    __tablename__ = "history"
+    id = Column(Integer, primary_key=True)
+    amount = Column("Amount", Float)
+    account_id = Column("Account id", Integer)
+
 
 Base.metadata.create_all(engine)
